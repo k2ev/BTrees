@@ -2,44 +2,52 @@ class NodeBTree:
     __slots__ = ["_item", "_left", "_right"]
 
     def __init__(self, item=None, left=None, right=None):
-        self._item = item
-        self._left = left
-        self._right = right
+        self.item = item
+        self.left = left
+        self.right = right
 
-    def is_leaf(self):
-        return True if self._left is None and self._right is None else False
+    def __str__(self):
+        return str(self.item)
 
     def __lt__(self, other):
-        return True if self._item < other._item else False
+        return True if self.item < other.item else False
 
     def __eq__(self, other):
-        return True if self._item == other._item else False
+        return True if self.item == other.item else False
 
     def __ne__(self, other):
-        return True if self._item != other._item else False
+        return True if self.item != other.item else False
 
-    def get_item(self):
+    @property
+    def item(self):
         return self._item
 
-    def set_item(self, item):
+    @item.setter
+    def item(self, item):
         self._item = item
         return
 
-    def get_left(self):
+    @property
+    def left(self):
         return self._left
 
-    def get_right(self):
+    @property
+    def right(self):
         return self._right
 
-    def set_left(self, left):
-        self._left = left
+    @left.setter
+    def left(self, node):
+        assert node is None or isinstance(node, NodeBTree)
+        self._left = node
 
-    def set_right(self, right):
-        self._right = right
+    @right.setter
+    def right(self, node):
+        assert node is None or isinstance(node, NodeBTree)
+        self._right = node
 
-    def __str__(self):
-        return " " + str(self._item)
+    def is_leaf(self):
+        return True if self.left is None and self.right is None else False
 
-
-
-
+    def children(self):
+        yield self.left
+        yield self.right

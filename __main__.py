@@ -15,20 +15,24 @@ d = NodeBTree(15)
 e = NodeBTree(19)
 f = NodeBTree(20)
 g = NodeBTree(25)
-a.set_left(b)
-b.set_left(d)
-d.set_left(g)
-a.set_right(c)
-b.set_right(f)
-c.set_right(e)
+a.left = b
+b.left = d
+d.left = g
+a.right = c
+b.right = f
+c.right = e
 
 t = BTreeLinked(a)
 print(t)
-print(t.height())
-print(t.sum_max_depth())
-print(t.breadth())
-print(t.depth(f))
-print(t._depth(b,b))
-print(t.distance(f,g))
+print("height of tree:", t.height())
+print("sum of nodes on max depth:", t.sum_max_depth())
+print("breadth of tree:", t.breadth())
+print("level of node f:", t.level(f))
+print("level between node b and b:", t._level(b,b))
+print("distance between node f and g:", t.distance(f,g))
+print("total nodes in tree:", len(t))
+print("value of all nodes:", t.sum_value())
+print("iterate")
+t.set_traverse_method("_in_order_iterative")
 for node in t:
     print(node)
