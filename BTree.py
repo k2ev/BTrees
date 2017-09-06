@@ -17,7 +17,52 @@ class BTreeLinked:
         self.root = root
 
     def __str__(self):
-        return "tree"
+        current = self.root
+        queue, level, num_nodes_current_level, num_nodes_next_level = [current], 0, 1, 0
+        height = self.height()
+        level_length= 2*(2**height-1) - 2*(2**(height-1))
+        node_space_length = 2 + 2 * 2**height
+        start_length = level_length+2
+        s = ""
+        # this is a modified form of bft for pretty printing. Even null nodes are inserted into queue
+        while level < height:
+            level_length = level_length//2 - 1
+            node_space_length = node_space_length//2 + 1
+            start_length = level_length + 2
+            current = queue.pop(0)  # used as a queue
+            num_nodes_current_level -= 1
+            if num_nodes_next_level == 0:
+                width = int(start_length)
+            else:
+                width = int(node_space_length)
+            if current and current.item is not None and current.left and current.left.item is not None:
+                fill = '_'
+            else:
+                fill = ' '
+            s += '{:{fill}{align}{width}}'.format("", fill=fill, align='>', width=width)
+            width = level_length + 2
+            if current and current.item is not None and current.right and current.right.item is not None:
+                fill = '_'
+            else:
+                fill = ' '
+            s += '{:{fill}{align}{width}}'.format(str(current), fill=fill, align='>', width=width)
+            width = max(width-2,0)
+            fill = ' '
+            s += '{:{fill}{align}{width}}'.format("", fill=fill, align='>', width=width)
+
+            for child in current.children():
+                if child is None:
+                    child = NodeBTree()
+                queue.append(child)
+                num_nodes_next_level += 1
+
+            if num_nodes_current_level == 0:
+                s += "\n"
+                level += 1
+                num_nodes_current_level = num_nodes_next_level
+                num_nodes_next_level = 0
+                level_length = level_length//2
+        return s
 
     def __len__(self):
         count_ = 0
