@@ -1,6 +1,5 @@
 from NodeBTree import NodeBTree
-
-sentinel = object()
+from constants import sentinel
 
 
 class BTreeLinked:
@@ -14,6 +13,7 @@ class BTreeLinked:
     ###################
 
     def __init__(self, root=None):
+        root = self.val_to_node(root)
         self.root = root
 
     def __str__(self):
@@ -64,13 +64,16 @@ class BTreeLinked:
     def distance(self, node_a, node_b):
         dist_common = self._level(node_a, node_b)  # distance from B->A assuming direct path
         if dist_common < 0:
-            dist_common = self._level(node_b, node_a)  # dustance from A->B assuming direct path
+            dist_common = self._level(node_b, node_a)  # distance from A->B assuming direct path
         if dist_common < 0:
             dist_common = self.level(node_a) + self.level(node_b) - 2 * self.level(self.common_parent(node_a, node_b))
         return dist_common
 
     def contains(self, node, current=sentinel):
         current = self.get_root_default(current)
+        if type(node) is not NodeBTree:
+            if type(node) is int or float:
+                node = NodeBTree(node)
         return False if self._level(node, current) < 0 else True
 
     def common_parent(self, node_a, node_b):
@@ -245,3 +248,11 @@ class BTreeLinked:
             cls.traverse_type = name
         else:
             print(name, "is not permissible input. Allowed methods are:", allowed_methods)
+
+    @staticmethod
+    def val_to_node(val):
+        if type(val) is NodeBTree:
+            return val
+        else:
+            if type(val) is int or float:
+                return NodeBTree(val)

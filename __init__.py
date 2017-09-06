@@ -1,1 +1,1 @@
-__all__ = ["BTree", "NodeBTree"]
+__all__ = ["BTree", "NodeBTree", "BST"]
