@@ -1,4 +1,4 @@
-from NodeBTree import NodeBTree
+from Nodes import *
 from constants import sentinel
 
 
@@ -7,20 +7,21 @@ class BTreeLinked:
     # Class Variables #
     ###################
     traverse_type = "_bft_iterative"
+    node_type = "simple"
 
     ###################
     # Magic Methods   #
     ###################
 
     def __init__(self, root=None):
-        root = self.val_to_node(root)
+        root = self.get_node(root)
         self.root = root
 
     def __str__(self):
         current = self.root
         queue, level, num_nodes_current_level, num_nodes_next_level = [current], 0, 1, 0
         height = self.height()
-        level_length= 2*(2**height-1) - 2*(2**(height-1))
+        level_length= 2*(2**height-1)
         node_space_length = 2 + 2 * 2**height
         start_length = level_length+2
         s = ""
@@ -46,13 +47,11 @@ class BTreeLinked:
             else:
                 fill = ' '
             s += '{:{fill}{align}{width}}'.format(str(current), fill=fill, align='>', width=width)
-            width = max(width-2,0)
-            fill = ' '
-            s += '{:{fill}{align}{width}}'.format("", fill=fill, align='>', width=width)
+            s += '{:{fill}{align}{width}}'.format("", fill=fill, align='<', width=width)
 
             for child in current.children():
                 if child is None:
-                    child = NodeBTree()
+                    child = NodeSimple()
                 queue.append(child)
                 num_nodes_next_level += 1
 
@@ -89,7 +88,7 @@ class BTreeLinked:
     
     @root.setter
     def root(self, node):
-        assert node is None or isinstance(node, NodeBTree)
+        assert node is None or isinstance(node, NodeSimple)
         self._root = node
 
     def traverse(self):
@@ -116,9 +115,9 @@ class BTreeLinked:
 
     def contains(self, node, current=sentinel):
         current = self.get_root_default(current)
-        if type(node) is not NodeBTree:
+        if type(node) is not NodeSimple:
             if type(node) is int or float:
-                node = NodeBTree(node)
+                node = NodeSimple(node)
         return False if self._level(node, current) < 0 else True
 
     def common_parent(self, node_a, node_b):
@@ -294,10 +293,7 @@ class BTreeLinked:
         else:
             print(name, "is not permissible input. Allowed methods are:", allowed_methods)
 
-    @staticmethod
-    def val_to_node(val):
-        if type(val) is NodeBTree:
-            return val
-        else:
-            if type(val) is int or float:
-                return NodeBTree(val)
+    @classmethod
+    def get_node(cls, *args, **kwargs):
+        kwargs['node_type'] = cls.node_type
+        return NodeFactory.get_node(*args, **kwargs)

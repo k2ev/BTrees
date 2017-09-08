@@ -5,8 +5,10 @@ import constants
 
 class BstRB(BstRegular):
 
+    node_type = "RB"
+
     def insert(self, val):
-        node = self.val_to_node(val)
+        node = self.get_node(val)
         node = super().insert(node)
         if node:
             node.color = constants.color_red
@@ -110,11 +112,3 @@ class BstRB(BstRegular):
     def remove(self, val):
         node = self.val_to_node(val)
         node = super().remove(node)
-
-    @staticmethod
-    def val_to_node(val):
-        if type(val) is NodeWithColor:
-            return val
-        else:
-            if type(val) is int or float:
-                return NodeWithColor(val)

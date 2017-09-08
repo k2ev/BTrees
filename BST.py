@@ -1,8 +1,99 @@
-from BTree import BTreeLinked
+from BTree import *
+from Nodes import *
 from constants import sentinel
 
 
-class BST(BTreeLinked):
+class BstRegular(BTreeLinked):
+
+    node_type = "regular"
+
+    def __init__(self, node=None):
+        super().__init__(node)
+
+    def contains(self, node, current=sentinel):
+        node = self.get_node(node)
+        if current is sentinel:
+            current = self.root
+        if current is not None:
+            if current.item == node.item:
+                return current
+            elif node.item < current.item:
+                return self.contains(node, current.left)
+            elif node.item > current.item:
+                return self.contains(node, current.right)
+        else:
+            return None
+
+    def min_value_node(self, current=sentinel):
+        current = self.get_root_default(current)
+        while current.left is not None:
+            current = current.left
+        return current
+
+    def max_value_node(self, current=sentinel):
+        current = self.get_root_default(current)
+        self.parent_node = None
+        while current.right is not None:
+            current = current.right
+        return current
+
+    def insert(self, val):
+        node = self.get_node(val)
+        current = self.root
+        prior = None
+
+        if current is None:
+            self.root = node
+            return node
+        else:
+            while current is not None:
+                prior = current
+                if node.item <= current.item:
+                    current = current.left
+                elif node.item > current.item:
+                    current = current.right
+
+            if prior is not None:
+                if node.item <= prior.item:
+                    prior.left = node
+                else:
+                    prior.right = node
+                node.parent = prior
+
+                return node
+            else:
+                return None
+
+    def remove(self, val):
+        node = self.get_node(val)
+        node = self.contains(node)
+
+        if node is not None:
+            if node.right:
+                min_node = self.min_value_node(node.right)
+                if min_node.parent.left is node:
+                    min_node.parent.left = None
+                else:
+                    min_node.parent.right = None
+                node.item = min_node.item
+            elif node.left:
+                node.item = node.left.item
+                node.left = None
+            else:
+                if node.parent:
+                    if node.parent.left is node:
+                        node.parent.left = None
+                    else:
+                        node.parent.right = None
+                else:
+                    self.root = None   # if it doesnt have a left or right node nor a parent then its a root node
+
+            return True
+        else:
+            return False
+
+
+class BstSimple(BTreeLinked):
 
     def __init__(self, node=None):
         super().__init__(node)
@@ -23,7 +114,7 @@ class BST(BTreeLinked):
         return
 
     def contains(self, node, current=sentinel):
-        node = self.val_to_node(node)
+        node = self.get_node(node)
         if current is sentinel:
             current = self.root
             self.parent_node = None  # a second pointer is being maintained as BTreeNode doesnt have a parent pointer
@@ -57,7 +148,7 @@ class BST(BTreeLinked):
         return current
 
     def insert(self, val):
-        node = self.val_to_node(val)
+        node = self.get_node(val)
         current = self.root
         prior = None
 
@@ -74,20 +165,23 @@ class BST(BTreeLinked):
             else:
                 prior.right = node
 
-            return True
+            return node
         else:
-            return False
+            return None
 
     def remove(self, val):
-        node = self.val_to_node(val)
+        node = self.get_node(val)
         node = self.contains(node)
         node_parent = self.parent_node
 
         if node is not None:
             if node.right:
                 min_node = self.min_value_node(node.right)
-                min_node_parent = self.parent_node
-                if min_node_parent.left is node:
+                if min_node is node.right:
+                    min_node_parent = node
+                else:
+                    min_node_parent = self.parent_node
+                if min_node_parent.left is not None and min_node_parent.left is node:
                     min_node_parent.left = None
                 else:
                     min_node_parent.right = None

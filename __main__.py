@@ -1,6 +1,6 @@
-from NodeBTree import *
-from BTree import BTreeLinked
-from BST import BST
+from Nodes import *
+from BST import *
+from RBTree import *
 
 
 def run_btree():
@@ -11,13 +11,13 @@ def run_btree():
     #       d(15)   f(20)    e(19)
     #      /
     #     g(25)
-    a = NodeBTree(10)
-    b = NodeBTree(5)
-    c = NodeBTree(2)
-    d = NodeBTree(15)
-    e = NodeBTree(19)
-    f = NodeBTree(20)
-    g = NodeBTree(25)
+    a = NodeSimple(10)
+    b = NodeSimple(5)
+    c = NodeSimple(2)
+    d = NodeSimple(15)
+    e = NodeSimple(19)
+    f = NodeSimple(20)
+    g = NodeSimple(25)
     a.left = b
     b.left = d
     d.left = g
@@ -41,21 +41,37 @@ def run_btree():
 
 
 def run_bst():
-    a = BST(10)
+    a = BstRegular(10)
     a.insert(20)
     a.insert(5)
-    a.insert(2)
+    a.insert(7)
+    a.insert(22)
+    a.insert(4)
+    a.insert(15)
     a.remove(5)
 
-    print( "length of BST is:", len(a))
+    print( "length of BstSimple is:", len(a))
 
-    for x in a:
-        print(x)
+    print(a)
+
+def run_rbt():
+    a = BstRB(8)
+    a.insert(18)
+    a.insert(5)
+    a.insert(15)
+    a.insert(17)
+    a.insert(25)
+    a.insert(40)
+    a.insert(80)
+
+
+    print(a)
 
 
 def main():
-    # run_btree()
+    run_btree()
     run_bst()
+    run_rbt()
 
 
 if __name__ == "__main__":
