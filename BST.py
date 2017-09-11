@@ -1,5 +1,4 @@
 from BTree import *
-from Nodes import *
 from constants import sentinel
 
 
@@ -10,19 +9,35 @@ class BstRegular(BTreeLinked):
     def __init__(self, node=None):
         super().__init__(node)
 
-    def contains(self, node, current=sentinel):
+    def _contains_no_frills(self, val, current=sentinel):
+        node_contains_info = self._contains_with_info(val, current)
+        node_found = node_contains_info.get("flag", False)
+        node = node_contains_info.get("node", None)
+        if node_found:
+            return node
+        else:
+            return None
+
+    def _contains_with_info(self, node, current=sentinel, prior=sentinel):
         node = self.get_node(node)
         if current is sentinel:
             current = self.root
+            prior = None
+
         if current is not None:
-            if current.item == node.item:
-                return current
-            elif node.item < current.item:
-                return self.contains(node, current.left)
-            elif node.item > current.item:
-                return self.contains(node, current.right)
+            if current == node:
+                return dict(flag=True, node=current, prior=current.parent)
+            elif node< current:
+                prior = current
+                return self._contains_with_info(node, current.left, prior)
+            elif node > current:
+                prior = current
+                return self._contains_with_info(node, current.right, prior)
         else:
-            return None
+            return dict(flag=False, node=node, prior=prior)
+
+    def contains(self, val, current=sentinel):
+        return self._contains_no_frills(val, current)
 
     def min_value_node(self, current=sentinel):
         current = self.get_root_default(current)
@@ -65,35 +80,95 @@ class BstRegular(BTreeLinked):
                 return None
 
     def remove(self, val):
+        node_remove_info = self._remove_with_info(val)
+        node_remove_flag = node_remove_info.get("flag", False)
+        return node_remove_flag
+
+    def _remove_with_info(self, val):
         node = self.get_node(val)
-        node = self.contains(node)
+        node = self._contains_no_frills(node)
+        flag, prior = False, None #  prior is parent of deleted node
 
-        if node is not None:
-            if node.right:
-                min_node = self.min_value_node(node.right)
-                if min_node.parent.left is node:
-                    min_node.parent.left = None
+        if self.root and node:
+            if node is self.root:
+                self.root = None
+                prior = None
+            elif node.is_leaf():
+                if node.is_left_child():
+                    node.parent.left = None
+                    prior = node.parent
+                    node.parent = None
                 else:
-                    min_node.parent.right = None
-                node.item = min_node.item
-            elif node.left:
-                node.item = node.left.item
-                node.left = None
-            else:
-                if node.parent:
-                    if node.parent.left is node:
-                        node.parent.left = None
+                    node.parent.right = None
+                    prior = node.parent
+                    node.parent = None
+            elif node.has_one_child() and node.left:
+                prior = node.left
+                node.left.parent = node.parent
+                if node.is_left_child():
+                    node.parent.left = prior
+                else:
+                    node.parent.right = prior
+            elif node.right:
+                if node.right.left:
+                    min_node = self.min_value_node(node.right)
+                    node.item = min_node.item
+                    prior = min_node.parent
+                    if min_node.is_left_child():
+                        min_node.parent.left = None
                     else:
-                        node.parent.right = None
+                        min_node.parent.right = None
                 else:
-                    self.root = None   # if it doesnt have a left or right node nor a parent then its a root node
+                    prior = node.right
+                    node.right.parent = node.parent
+                    if node.is_left_child():
+                        node.parent.left = prior
+                    else:
+                        node.parent.right = prior
+            flag = True
 
-            return True
+            return dict(flag=flag, node=node, prior=prior)
+
+    def _rotate(self, node, dir = "left"):
+        grand_parent = node
+        parent = node.right if dir == "left" else node.left
+        great_grand_parent = grand_parent.parent
+
+        ## left rotate g, making p as parent of g
+
+        # p in g position with ggp as parent
+        if great_grand_parent:
+            parent.parent = great_grand_parent
+            if grand_parent.is_right_child():
+                great_grand_parent.right = parent
+            else:
+                great_grand_parent.left = parent
         else:
-            return False
+            self.root = parent
+            parent.parent = None
+
+        # put g as a right child of p
+        grand_parent.parent = parent
+        if dir == "left":
+            grand_parent.right = parent.left
+            parent.left = grand_parent
+        else:
+            grand_parent.left = parent.right
+            parent.right = grand_parent
+
+        return
+
+    def _rotate_left(self, node):
+        return self._rotate(node, dir="left")
+
+    def _rotate_right(self, node):
+        return self._rotate(node, dir="right")
 
 
 class BstSimple(BTreeLinked):
+    # doesnt provide rotate method
+
+    node_type = "simple"
 
     def __init__(self, node=None):
         super().__init__(node)

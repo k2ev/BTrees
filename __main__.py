@@ -1,6 +1,7 @@
 from Nodes import *
 from BST import *
 from RBTree import *
+from SplayTree import *
 
 
 def run_btree():
@@ -67,11 +68,22 @@ def run_rbt():
 
     print(a)
 
+def run_splay():
+    a = BstSplay(8)
+    a.insert(10)
+    a.insert(7)
+    a.insert(6)
+    a.insert(5)
+    a.insert(9)
+    a.remove(7)
+
+    print(a)
 
 def main():
-    run_btree()
-    run_bst()
-    run_rbt()
+    #run_btree()
+    #run_bst()
+    #run_rbt()
+    run_splay()
 
 
 if __name__ == "__main__":

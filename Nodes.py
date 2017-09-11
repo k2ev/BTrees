@@ -74,6 +74,9 @@ class NodeSimple(NodeBTree):
 
         return flag
 
+    def has_one_child(self):
+        return False if self.is_leaf() or (self.left and self.right) else True
+
     def children(self):
         yield self.left
         yield self.right

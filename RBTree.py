@@ -1,4 +1,3 @@
-from Nodes import *
 from BST import BstRegular
 import constants
 
@@ -6,6 +5,9 @@ import constants
 class BstRB(BstRegular):
 
     node_type = "RB"
+
+    def __init__(self, node=None):
+        super().__init__(node)
 
     def insert(self, val):
         node = self.get_node(val)
@@ -38,34 +40,6 @@ class BstRB(BstRegular):
                 self._right_left_rotate_swap(node)
         return
 
-    def _rotate(self, node, dir = "left"):
-        grand_parent = node
-        parent = node.right if dir == "left" else node.left
-        great_grand_parent = grand_parent.parent
-
-        ## left rotate g, making p as parent of g
-
-        # p in g position with ggp as parent
-        if great_grand_parent:
-            parent.parent = great_grand_parent
-            if grand_parent.is_right_child():
-                great_grand_parent.right = parent
-            else:
-                great_grand_parent.left = parent
-        else:
-            self.root = parent
-
-        # put g as a right child of p
-        grand_parent.parent = parent
-        if dir == "left":
-            grand_parent.right = parent.left
-            parent.left = grand_parent
-        else:
-            grand_parent.left = parent.right
-            parent.right = grand_parent
-
-        return
-
     def _swap_colors(self, node_a, node_b):
         if node_a and node_b:
             temp = node_a.color
@@ -80,14 +54,14 @@ class BstRB(BstRegular):
     # right_right_case
     def _left_rotate_swap(self, node):
         grand_parent = node.get_grandparent()
-        self._rotate(grand_parent, dir="left")
+        self._rotate_left(grand_parent)
         self._swap_colors(grand_parent, grand_parent.parent)
         return
 
     # left_left case
     def _right_rotate_swap(self, node):
         grand_parent = node.get_grandparent()
-        self._rotate(grand_parent, dir="right")
+        self._rotate_right(grand_parent)
         self._swap_colors(grand_parent, grand_parent.parent)
         return
 
@@ -95,8 +69,8 @@ class BstRB(BstRegular):
     def _left_right_rotate_swap(self, node):
         parent = node.parent
         grand_parent = node.get_grandparent()
-        self._rotate(parent, dir="left")
-        self._rotate(grand_parent, dir="right")
+        self._rotate_left(parent)
+        self._rotate_right(grand_parent)
         self._swap_colors(grand_parent, grand_parent.parent)
         return
 
@@ -104,8 +78,8 @@ class BstRB(BstRegular):
     def _right_left_rotate_swap(self, node):
         parent = node.parent
         grand_parent = node.get_grandparent()
-        self._rotate(parent, dir="right")
-        self._rotate(grand_parent, dir="left")
+        self._rotate_right(parent)
+        self._rotate_left(grand_parent)
         self._swap_colors(grand_parent, grand_parent.parent)
         return
 
