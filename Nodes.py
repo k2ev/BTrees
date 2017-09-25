@@ -151,7 +151,7 @@ class NodeWithHeight(NodeWithParent):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.height = kwargs.pop('height', None)
+        self.height = kwargs.pop('height', 0)
 
     @property
     def height(self):
