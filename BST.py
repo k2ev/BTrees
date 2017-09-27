@@ -1,4 +1,4 @@
-from BTree import *
+from BTree import BTreeLinked
 from constants import sentinel
 
 
