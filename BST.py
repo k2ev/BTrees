@@ -131,6 +131,7 @@ class BstRegular(BTreeLinked):
 
     def _rotate(self, node, dir = "left"):
         grand_parent = node
+        grand_parent_is_right_child = grand_parent.is_right_child()
         parent = node.right if dir == "left" else node.left
         great_grand_parent = grand_parent.parent
 
@@ -139,7 +140,7 @@ class BstRegular(BTreeLinked):
         # p in g position with ggp as parent
         if great_grand_parent:
             parent.parent = great_grand_parent
-            if grand_parent.is_right_child():
+            if grand_parent_is_right_child:
                 great_grand_parent.right = parent
             else:
                 great_grand_parent.left = parent
@@ -150,12 +151,16 @@ class BstRegular(BTreeLinked):
         # put g as a right child of p
         grand_parent.parent = parent
         if dir == "left":
+            branch_to_move = parent.left
             grand_parent.right = parent.left
             parent.left = grand_parent
         else:
+            branch_to_move = parent.right
             grand_parent.left = parent.right
             parent.right = grand_parent
 
+        if branch_to_move:
+            branch_to_move.parent = grand_parent
         return
 
     def _rotate_left(self, node):
