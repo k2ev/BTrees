@@ -2,6 +2,7 @@ from Nodes import *
 from BST import *
 from RBTree import *
 from SplayTree import *
+from AVLTree import *
 
 
 def run_btree():
@@ -79,11 +80,27 @@ def run_splay():
 
     print(a)
 
+def run_avl():
+    a = BstAVL(14)
+    a.insert(71)
+    a.insert(3)
+    a.insert(52)
+    a.insert(68)
+    a.insert(92)
+    a.insert(59)
+    a.insert(37)
+    a.insert(22)
+    a.insert(49)
+    a.insert(41)
+
+    print(a)
+
 def main():
     #run_btree()
     #run_bst()
     #run_rbt()
-    run_splay()
+    #run_splay()
+    run_avl()
 
 
 if __name__ == "__main__":
