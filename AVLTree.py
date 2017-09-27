@@ -41,17 +41,18 @@ class BstAVL(BstRegular):
                 self._fix_height(current)
                 balance_factor = self._get_balance(current)
 
-                if balance_factor > 1:
-                    if self._get_balance(current.left) < 0:
-                        self._rotate_left(current.left)
-                    self._rotate_right(current)
+                if balance_factor > 1 or balance_factor < -1:
+                    if balance_factor > 1:
+                        if self._get_balance(current.left) < 0:
+                            self._rotate_left(current.left)
+                        self._rotate_right(current)
 
-                if balance_factor < -1:
-                    if self._get_balance(current.right) > 0:
-                        self._rotate_right(current.right)
-                    self._rotate_left(current)
-
-            self._balance(current)
+                    if balance_factor < -1:
+                        if self._get_balance(current.right) > 0:
+                            self._rotate_right(current.right)
+                        self._rotate_left(current)
+                else:
+                    self._balance(current) # its only recursing to find first imbalance node
         return
 
 
