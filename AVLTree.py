@@ -1,5 +1,4 @@
 from BST import BstRegular
-from constants import *
 
 class BstAVL(BstRegular):
     node_type = "AVL"
