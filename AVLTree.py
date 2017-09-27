@@ -19,7 +19,8 @@ class BstAVL(BstRegular):
 
     def insert(self, val):
         node = super().insert(val)
-        self._balance(node)
+        if node.parent:
+            self._balance(node.parent)
         return node
 
     def _rotate_right(self, node):
@@ -34,28 +35,37 @@ class BstAVL(BstRegular):
         self._fix_height(node)
         self._fix_height(right_child)
 
-    def _balance(self, node):
-        if node:
-            current = node.parent
-            if current:
-                self._fix_height(current)
-                balance_factor = self._get_balance(current)
+    def _balance(self, node, recurse=False):
+            if node:
+                self._fix_height(node)
+                balance_factor = self._get_balance(node)
+                balanced_node = False if abs(balance_factor) > 1 else True
 
-                if balance_factor > 1 or balance_factor < -1:
+                if not balanced_node:
                     if balance_factor > 1:
-                        if self._get_balance(current.left) < 0:
-                            self._rotate_left(current.left)
-                        self._rotate_right(current)
+                        if self._get_balance(node.left) < 0:
+                            self._rotate_left(node.left)
+                        self._rotate_right(node)
 
                     if balance_factor < -1:
-                        if self._get_balance(current.right) > 0:
-                            self._rotate_right(current.right)
-                        self._rotate_left(current)
-                else:
-                    self._balance(current) # its only recursing to find first imbalance node
-        return
+                        if self._get_balance(node.right) > 0:
+                            self._rotate_right(node.right)
+                        self._rotate_left(node)
 
+                if recurse or balanced_node:
+                    self._balance(node.parent) if node.parent else None
+            return
 
+    def remove(self, val):
+        if self.root:
+            node_remove_info = self._remove_with_info(val)
+            node_remove_flag = node_remove_info.get("flag", False)
+            node_prior = node_remove_info.get("prior", None)
+
+            if node_remove_flag:
+                self._balance(node_prior, True) # apply balancing all the way to root
+
+            return node_remove_flag
 
 
 

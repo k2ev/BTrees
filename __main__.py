@@ -95,12 +95,18 @@ def run_avl():
 
     print(a)
 
+def run_avl2():
+    a = BstAVL.from_list("629148B357ACD")
+    a.remove("1")
+    print(a)
+
 def main():
     #run_btree()
     #run_bst()
     #run_rbt()
     #run_splay()
-    run_avl()
+    #run_avl()
+    run_avl2()
 
 
 if __name__ == "__main__":
