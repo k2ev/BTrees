@@ -297,3 +297,13 @@ class BTreeLinked:
     def get_node(cls, *args, **kwargs):
         kwargs['node_type'] = cls.node_type
         return NodeFactory.get_node(*args, **kwargs)
+
+    @classmethod
+    def from_list(cls, my_list):
+        if len(my_list):
+            tree = cls(my_list[0])
+            for item in my_list[1:]:
+                tree.insert(item)
+        else:
+            tree = cls()
+        return tree
