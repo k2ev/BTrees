@@ -1,5 +1,5 @@
 from BST import BstRegular
-from constants import *
+from constants import sentinel
 
 class BstSplay(BstRegular):
 
