@@ -81,6 +81,45 @@ class NodeSimple(NodeBTree):
         yield self.left
         yield self.right
 
+    def min_child_if_exists(self):
+        if self.left:
+            if self.right:
+                if self.left < self.right:
+                    return self.left
+                else:
+                    return self.right
+            else:
+                return self.left
+        elif self.right:
+            if self.left:
+                if self.left < self.right:
+                    return self.left
+                else:
+                    return self.right
+            else:
+                return self.right
+        else:
+            return None
+
+    def max_child_if_exists(self):
+        if self.left:
+            if self.right:
+                if self.left > self.right:
+                    return self.left
+                else:
+                    return self.right
+            else:
+                return self.left
+        elif self.right:
+            if self.left:
+                if self.left > self.right:
+                    return self.left
+                else:
+                    return self.right
+            else:
+                return self.right
+        else:
+            return None
 
 class NodeWithParent(NodeSimple):
     def __init__(self, *args, **kwargs):
